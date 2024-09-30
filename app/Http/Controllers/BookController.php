@@ -20,4 +20,26 @@ class BookController extends Controller
         $book = Book::find($bookId);
         return view('books.show')->with('book', $book);
     }
+
+    public function create()
+    {
+        return view('books.create');
+    }
+
+    public function store(Request $request)
+    {
+        // dd($request->all());
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'isbn' => 'required|string|size:13',
+            'stock' => 'required|integer|min:1',
+            'price' => 'required|numeric|min:0',
+        ]);
+
+        // Create the book using the validated data
+        $book = Book::create($validatedData);
+
+        return redirect()->route('books.show', $book->id);
+    }
 }
