@@ -25,7 +25,16 @@
             <td>{{$book->stock}}</td>
             {{-- <td>{{$book->created_at}}</td>
             <td>{{$book->updated_at}}</td> --}}
-            <td><a href="{{route('books.show', $book->id)}}">view</a></td>
+            <td>
+                <a href="{{route('books.show', $book->id)}}">view</a>
+                <a href="{{route('books.edit', $book->id)}}">edit</a>
+                <form method="post" action="{{ route('books.destroy', $book->id) }}" onsubmit="return confirm('Are you sure you want to delete this book?')" class="m-0">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+                
+            </td>
         </tr>
         @endforeach
     </table>

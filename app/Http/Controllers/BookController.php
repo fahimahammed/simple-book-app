@@ -53,4 +53,43 @@ class BookController extends Controller
 
         return redirect()->route('books.show', $book->id);
     }
+
+    public function destroy(Request $request, $bookId)
+    {
+        $book = Book::find($bookId);
+        $book->delete();
+        return redirect()->route('books.index');
+    }
+
+    public function search(Request $request)
+    {
+        $text = '%' . $request->search . '%';
+        $books = Book::where('title', 'LIKE', $text)->paginate(10);
+        ;
+        return view('books.index')->with('books', $books);
+    }
+
+    public function edit($bookId)
+    {
+        $book = Book::findOrFail($bookId);
+        return view('books.edit')->with('book', $book);
+    }
+
+    public function update(Request $request, $bookId)
+    {
+        // Validate the request data
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'isbn' => 'required|string|max:13',
+            'stock' => 'required|integer|min:1',
+            'price' => 'required|numeric|min:0',
+        ]);
+
+        // Find the book and update it
+        $book = Book::findOrFail($bookId);
+        $book->update($validatedData);
+
+        return redirect()->route('books.show', $book->id);
+    }
 }
